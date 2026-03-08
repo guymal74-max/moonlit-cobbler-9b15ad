@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>רפי שפירא - סידור עבודה</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'David', 'Arial Hebrew', Arial, sans-serif;
+    background: #f0f2f5;
+    direction: rtl;
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: #fff;
+    border-bottom: 4px solid #c8102e;
+    padding: 10px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+
+  .logo-container img {
+    height: 70px;
+    object-fit: contain;
+  }
+
+  .header-title {
+    text-align: center;
+    flex: 1;
+  }
+
+  .header-title h1 {
+    font-size: 28px;
+    color: #c8102e;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .header-title p {
+    font-size: 14px;
+    color: #666;
+    margin-top: 2px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: bold;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary {
+    background: #c8102e;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(200,16,46,0.35);
+  }
+  .btn-primary:hover { background: #a50d26; transform: translateY(-1px); }
+
+  .btn-success {
+    background: #28a745;
+    color: #fff;
+  }
+  .btn-success:hover { background: #218838; transform: translateY(-1px); }
+
+  .btn-warning {
+    background: #ffc107;
+    color: #212529;
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  .btn-warning:hover { background: #e0a800; }
+
+  .btn-danger {
+    background: #dc3545;
+    color: #fff;
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  .btn-danger:hover { background: #c82333; }
+
+  .btn-secondary {
+    background: #6c757d;
+    color: #fff;
+  }
+  .btn-secondary:hover { background: #545b62; }
+
+  .btn-info {
+    background: #17a2b8;
+    color: #fff;
+  }
+  .btn-info:hover { background: #138496; }
+
+  /* ===== MAIN CONTAINER ===== */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 30px;
+  }
+
+  /* ===== STATS BAR ===== */
+  .stats-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px 25px;
+    flex: 1;
+    min-width: 140px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-right: 4px solid #c8102e;
+    text-align: center;
+  }
+
+  .stat-card .stat-num {
+    font-size: 32px;
+    font-weight: bold;
+    color: #c8102e;
+  }
+
+  .stat-card .stat-label {
+    font-size: 13px;
+    color: #666;
+    margin-top: 3px;
+  }
+
+  /* ===== FORM CARD ===== */
+  .form-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .form-header {
+    background: linear-gradient(135deg, #c8102e 0%, #8b0000 100%);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .form-header .icon { font-size: 20px; }
+
+  .form-body {
+    padding: 24px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-group label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #444;
+  }
+
+  .form-group label .required {
+    color: #c8102e;
+    margin-right: 3px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    direction: rtl;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #fafafa;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #c8102e;
+    box-shadow: 0 0 0 3px rgba(200,16,46,0.12);
+    background: #fff;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+
+  /* ===== FILTER BAR ===== */
+  .filter-bar {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-bar label { font-size: 13px; font-weight: bold; color: #444; }
+
+  .filter-bar input, .filter-bar select {
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    direction: rtl;
+    min-width: 160px;
+  }
+
+  .filter-bar input:focus, .filter-bar select:focus {
+    outline: none;
+    border-color: #c8102e;
+  }
+
+  /* ===== TABLE ===== */
+  .table-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .table-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .table-header .count-badge {
+    background: #c8102e;
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead th {
+    background: #c8102e;
+    color: #fff;
+    padding: 12px 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    white-space: nowrap;
+    border-left: 1px solid rgba(255,255,255,0.2);
+  }
+
+  thead th:last-child { border-left: none; }
+
+  tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: #fff5f7; }
+
+  /* Date group rows */
+  tbody tr.date-group-row {
+    background: linear-gradient(90deg, #fff0f3 0%, #fff 100%);
+    border-top: 2px solid #c8102e;
+  }
+
+  tbody tr.date-group-row td.date-cell {
+    font-weight: bold;
+    color: #c8102e;
+    font-size: 15px;
+  }
+
+  tbody td {
+    padding: 10px 10px;
+    text-align: right;
+    vertical-align: middle;
+    direction: rtl;
+    max-width: 220px;
+  }
+
+  tbody td.center { text-align: center; }
+
+  .date-badge {
+    display: inline-block;
+    background: #c8102e;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  .contact-info {
+    font-size: 12px;
+    color: #555;
+    direction: rtl;
+  }
+
+  .order-num {
+    font-weight: bold;
+    color: #1a73e8;
+    font-size: 13px;
+  }
+
+  .salesperson-badge {
+    display: inline-block;
+    background: #e8f4fd;
+    color: #1a73e8;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #bee3f8;
+  }
+
+  .note-text {
+    color: #e67e00;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .action-btns {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+  }
+
+  .empty-state .empty-icon { font-size: 60px; margin-bottom: 15px; }
+  .empty-state p { font-size: 16px; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: slideDown 0.25s ease;
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, #c8102e 0%, #8b0000 100%);
+    color: #fff;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+  .modal-close {
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+    color: #fff;
+  }
+
+  .modal-close:hover { opacity: 1; }
+
+  .modal-body {
+    padding: 24px;
+  }
+
+  .modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .modal-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .modal-group.full { grid-column: 1 / -1; }
+
+  .modal-group label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  .modal-group input,
+  .modal-group textarea {
+    padding: 9px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 7px;
+    font-size: 14px;
+    font-family: inherit;
+    direction: rtl;
+    background: #fafafa;
+    transition: border-color 0.2s;
+  }
+
+  .modal-group input:focus,
+  .modal-group textarea:focus {
+    outline: none;
+    border-color: #c8102e;
+    background: #fff;
+  }
+
+  .modal-group textarea { min-height: 70px; resize: vertical; }
+
+  .modal-footer {
+    padding: 16px 22px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    background: #f9f9f9;
+  }
+
+  /* ===== TOAST ===== */
+  .toast-container {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    animation: toastIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 240px;
+  }
+
+  .toast.success { background: #28a745; }
+  .toast.error { background: #dc3545; }
+  .toast.info { background: #17a2b8; }
+
+  @keyframes toastIn {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ===== CONFIRM DIALOG ===== */
+  .confirm-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .confirm-overlay.active { display: flex; }
+
+  .confirm-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+
+  .confirm-box .confirm-icon { font-size: 50px; margin-bottom: 12px; }
+  .confirm-box h3 { color: #dc3545; margin-bottom: 10px; font-size: 18px; }
+  .confirm-box p { color: #555; margin-bottom: 20px; font-size: 14px; }
+  .confirm-btns { display: flex; gap: 10px; justify-content: center; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .modal-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; gap: 10px; }
+    .stats-bar { flex-direction: column; }
+    .container { padding: 10px; }
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 7px; height: 7px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: #c8102e; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-container">
+    <img src="https://www.genspark.ai/api/files/s/6QDhNVHc" alt="רפי שפירא" onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block'">
+    <div id="logo-text" style="display:none; background:#c8102e; color:#fff; padding:8px 18px; border-radius:6px; font-size:20px; font-weight:bold;">רפי שפירא</div>
+  </div>
+  <div class="header-title">
+    <h1>📋 מערכת סידור עבודה</h1>
+    <p>ניהול פרויקטים ועבודות שטח</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-success" onclick="exportToExcel()">
+      ⬇️ ייצוא לאקסל
+    </button>
+    <button class="btn btn-info" onclick="importFromExcel()">
+      ⬆️ ייבוא מאקסל
+    </button>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="handleImport(event)">
+  </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+  <!-- STATS -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">סה"כ רשומות</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statDates">0</div>
+      <div class="stat-label">תאריכים שונים</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statSalespeople">0</div>
+      <div class="stat-label">אנשי מכירות</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statWithOrder">0</div>
+      <div class="stat-label">עם הזמנה</div>
+    </div>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="form-card">
+    <div class="form-header">
+      <span class="icon">➕</span>
+      <span id="formTitle">הוספת רשומה חדשה</span>
+    </div>
+    <div class="form-body">
+      <input type="hidden" id="editIndex" value="-1">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>תאריך <span class="required">*</span></label>
+          <input type="date" id="fDate" />
+        </div>
+        <div class="form-group">
+          <label>שם הפרויקט + כתובת <span class="required">*</span></label>
+          <input type="text" id="fProject" placeholder="שם הפרויקט וכתובת..." />
+        </div>
+        <div class="form-group">
+          <label>פרטים (איש קשר וטלפון)</label>
+          <input type="text" id="fDetails" placeholder="איש קשר: שם 0XX-XXXXXXX" />
+        </div>
+        <div class="form-group">
+          <label>מס' הזמנה</label>
+          <input type="text" id="fOrder" placeholder="מספר הזמנה..." />
+        </div>
+        <div class="form-group">
+          <label>איש מכירות</label>
+          <input type="text" id="fSalesperson" placeholder="שם איש המכירות..." list="salesList" />
+          <datalist id="salesList"></datalist>
+        </div>
+        <div class="form-group">
+          <label>הערות</label>
+          <input type="text" id="fNotes" placeholder="הערות נוספות..." />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveRecord()">
+          💾 שמור רשומה
+        </button>
+        <button class="btn btn-secondary" onclick="cancelEdit()" id="cancelBtn" style="display:none;">
+          ✖️ בטל עריכה
+        </button>
+        <button class="btn btn-secondary" onclick="clearForm()">
+          🗑️ נקה טופס
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <label>🔍 סינון:</label>
+    <input type="text" id="filterText" placeholder="חיפוש חופשי..." oninput="renderTable()" />
+    <label>📅 תאריך:</label>
+    <input type="date" id="filterDate" onchange="renderTable()" />
+    <label>👤 איש מכירות:</label>
+    <select id="filterSalesperson" onchange="renderTable()">
+      <option value="">-- הכל --</option>
+    </select>
+    <button class="btn btn-secondary" onclick="clearFilters()" style="padding:7px 14px; font-size:13px;">
+      ✖ נקה סינון
+    </button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="table-header">
+      <span>📊 רשימת עבודות</span>
+      <span class="count-badge" id="tableCount">0 רשומות</span>
+    </div>
+    <div class="table-wrapper">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th style="width:110px">תאריך</th>
+            <th style="min-width:180px">שם הפרויקט + כתובת</th>
+            <th style="min-width:180px">פרטים</th>
+            <th style="width:100px">מס' הזמנה</th>
+            <th style="width:130px">איש מכירות</th>
+            <th style="min-width:160px">הערות</th>
+            <th style="width:110px">פעולות</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end container -->
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span>✏️ עריכת רשומה</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div class="modal-group">
+          <label>תאריך</label>
+          <input type="date" id="mDate" />
+        </div>
+        <div class="modal-group">
+          <label>מס' הזמנה</label>
+          <input type="text" id="mOrder" placeholder="מספר הזמנה..." />
+        </div>
+        <div class="modal-group full">
+          <label>שם הפרויקט + כתובת</label>
+          <input type="text" id="mProject" placeholder="שם הפרויקט וכתובת..." />
+        </div>
+        <div class="modal-group full">
+          <label>פרטים (איש קשר וטלפון)</label>
+          <input type="text" id="mDetails" placeholder="איש קשר: שם 0XX-XXXXXXX" />
+        </div>
+        <div class="modal-group">
+          <label>איש מכירות</label>
+          <input type="text" id="mSalesperson" placeholder="שם איש המכירות..." />
+        </div>
+        <div class="modal-group">
+          <label>הערות</label>
+          <textarea id="mNotes" placeholder="הערות נוספות..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="saveModalEdit()">💾 שמור שינויים</button>
+      <button class="btn btn-secondary" onclick="closeModal()">✖️ ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <h3>אישור מחיקה</h3>
+    <p id="confirmText">האם אתה בטוח שברצונך למחוק רשומה זו?</p>
+    <div class="confirm-btns">
+      <button class="btn btn-danger" onclick="confirmDelete()">🗑️ מחק</button>
+      <button class="btn btn-secondary" onclick="closeConfirm()">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ===== DATA STORE =====
+let records = [];
+let deleteIndex = -1;
+let modalEditIndex = -1;
+
+const STORAGE_KEY = 'rafi_shapira_work_schedule';
+
+// ===== INIT =====
+function init() {
+  loadData();
+  setTodayDate();
+  renderTable();
+  updateStats();
+  updateSalesFilter();
+}
+
+function setTodayDate() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fDate').value = today;
+}
+
+// ===== STORAGE =====
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      records = JSON.parse(saved);
+    } else {
+      // Load sample data
+      records = [
+        { date: '2026-02-18', project: 'בית לין ת"א', details: 'איש קשר: 050-6785703', order: '', salesperson: 'מאיר בן אבו', notes: '' },
+        { date: '', project: 'משרדי גולף המלאכה 5 נתניה', details: 'איש קשר: אופיר 054-4345675', order: '117386', salesperson: 'רינת יהודה', notes: '' },
+        { date: '2026-02-19', project: 'גרנד קניון חיפה', details: 'איש קשר: גולן 050-9005151', order: '117365', salesperson: 'דודו ביטון', notes: "לקחת מידה ל 5 פסי זכ'" },
+        { date: '2026-02-23', project: 'כמיארט אריאל בע"מ', details: 'איש קשר: שמוליק 054-337300', order: '117422', salesperson: 'דודו ביטון', notes: '' },
+        { date: '', project: 'קניון ביאליק', details: 'איש קשר: מיקי 050-5565561', order: '117375', salesperson: 'דודו ביטון', notes: '' },
+        { date: '2026-02-24', project: 'קרולינה למקה ביג קרית גת', details: 'איש קשר: נמרוד 052-8666758', order: '117424', salesperson: 'רינת יהודה', notes: '' },
+        { date: '', project: "סקצ'רס גיטי סנטר נתיבות", details: 'איש קשר: ינון 054-4539880', order: '117435', salesperson: 'רינת יהודה', notes: '' },
+        { date: '2026-02-25', project: 'סטס + זורי', details: '', order: '', salesperson: '', notes: '' },
+        { date: '', project: 'שבירו נוריות מתחם 5 בניינים 51+52', details: '', order: '', salesperson: 'מירית', notes: 'ליווי יוסי סימן טוב' },
+        { date: '2026-02-26', project: 'סטס + זורי', details: '', order: '', salesperson: '', notes: '' },
+        { date: '', project: 'שבירו נוריות מתחם 5 בניינים 51+52', details: '', order: '', salesperson: 'מירית', notes: 'ליווי יוסי סימן טוב' },
+        { date: '2026-03-01', project: 'פולגת קריון ליד חנות SOHO', details: 'אופיר מגולף 054-4345675', order: '', salesperson: 'רינת יהודה', notes: 'פגישה להצעת מחיר ומידות לא להזיז!' },
+      ];
+      saveData();
+    }
+  } catch(e) {
+    records = [];
+  }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+// ===== RENDER TABLE =====
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const filterText = document.getElementById('filterText').value.toLowerCase();
+  const filterDate = document.getElementById('filterDate').value;
+  const filterSalesperson = document.getElementById('filterSalesperson').value;
+
+  let filtered = records.filter((r, i) => {
+    if (filterDate && r.date !== filterDate) return false;
+    if (filterSalesperson && r.salesperson.trim() !== filterSalesperson.trim()) return false;
+    if (filterText) {
+      const haystack = [r.date, r.project, r.details, r.order, r.salesperson, r.notes].join(' ').toLowerCase();
+      if (!haystack.includes(filterText)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('tableCount').textContent = filtered.length + ' רשומות';
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr><td colspan="7">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>אין רשומות להצגה</p>
+        </div>
+      </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((r, fi) => {
+    // find actual index in records
+    const actualIndex = records.indexOf(r);
+    const dateDisplay = r.date ? formatDate(r.date) : '';
+    const isDateRow = !!r.date;
+
+    return `
+      <tr class="${isDateRow ? 'date-group-row' : ''}">
+        <td class="center date-cell">
+          ${dateDisplay ? `<span class="date-badge">${dateDisplay}</span>` : ''}
+        </td>
+        <td>${escHtml(r.project)}</td>
+        <td><span class="contact-info">${escHtml(r.details)}</span></td>
+        <td class="center"><span class="order-num">${escHtml(r.order)}</span></td>
+        <td class="center">
+          ${r.salesperson ? `<span class="salesperson-badge">${escHtml(r.salesperson)}</span>` : ''}
+        </td>
+        <td><span class="note-text">${escHtml(r.notes)}</span></td>
+        <td class="center">
+          <div class="action-btns">
+            <button class="btn btn-warning" onclick="openEditModal(${actualIndex})" title="עריכה">✏️</button>
+            <button class="btn btn-danger" onclick="askDelete(${actualIndex})" title="מחיקה">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  const dayName = days[d.getDay()];
+  return `${dateStr.split('-').reverse().join('/')} | ${dayName}`;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/\n/g,'<br>');
+}
+
+// ===== STATS =====
+function updateStats() {
+  document.getElementById('statTotal').textContent = records.length;
+  const uniqueDates = new Set(records.filter(r=>r.date).map(r=>r.date));
+  document.getElementById('statDates').textContent = uniqueDates.size;
+  const uniqueSales = new Set(records.filter(r=>r.salesperson.trim()).map(r=>r.salesperson.trim()));
+  document.getElementById('statSalespeople').textContent = uniqueSales.size;
+  const withOrder = records.filter(r=>r.order.trim()).length;
+  document.getElementById('statWithOrder').textContent = withOrder;
+}
+
+// ===== FILTER =====
+function updateSalesFilter() {
+  const salesSet = new Set(records.filter(r=>r.salesperson.trim()).map(r=>r.salesperson.trim()));
+  const select = document.getElementById('filterSalesperson');
+  const current = select.value;
+  select.innerHTML = '<option value="">-- הכל --</option>';
+  [...salesSet].sort().forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    if (s === current) opt.selected = true;
+    select.appendChild(opt);
+  });
+
+  // Update datalist for sales input
+  const dl = document.getElementById('salesList');
+  dl.innerHTML = '';
+  [...salesSet].forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    dl.appendChild(opt);
+  });
+}
+
+function clearFilters() {
+  document.getElementById('filterText').value = '';
+  document.getElementById('filterDate').value = '';
+  document.getElementById('filterSalesperson').value = '';
+  renderTable();
+}
+
+// ===== SAVE RECORD =====
+function saveRecord() {
+  const project = document.getElementById('fProject').value.trim();
+  if (!project) {
+    showToast('יש למלא את שם הפרויקט!', 'error');
+    document.getElementById('fProject').focus();
+    return;
+  }
+
+  const record = {
+    date: document.getElementById('fDate').value,
+    project: project,
+    details: document.getElementById('fDetails').value.trim(),
+    order: document.getElementById('fOrder').value.trim(),
+    salesperson: document.getElementById('fSalesperson').value.trim(),
+    notes: document.getElementById('fNotes').value.trim()
+  };
+
+  const editIdx = parseInt(document.getElementById('editIndex').value);
+  if (editIdx >= 0) {
+    records[editIdx] = record;
+    showToast('✅ הרשומה עודכנה בהצלחה!', 'success');
+    cancelEdit();
+  } else {
+    records.push(record);
+    showToast('✅ הרשומה נוספה בהצלחה!', 'success');
+    clearForm();
+  }
+
+  saveData();
+  renderTable();
+  updateStats();
+  updateSalesFilter();
+}
+
+function clearForm() {
+  document.getElementById('fProject').value = '';
+  document.getElementById('fDetails').value = '';
+  document.getElementById('fOrder').value = '';
+  document.getElementById('fSalesperson').value = '';
+  document.getElementById('fNotes').value = '';
+  setTodayDate();
+}
+
+function cancelEdit() {
+  document.getElementById('editIndex').value = '-1';
+  document.getElementById('formTitle').textContent = 'הוספת רשומה חדשה';
+  document.getElementById('cancelBtn').style.display = 'none';
+  clearForm();
+}
+
+// ===== EDIT MODAL =====
+function openEditModal(index) {
+  const r = records[index];
+  modalEditIndex = index;
+  document.getElementById('mDate').value = r.date || '';
+  document.getElementById('mProject').value = r.project || '';
+  document.getElementById('mDetails').value = r.details || '';
+  document.getElementById('mOrder').value = r.order || '';
+  document.getElementById('mSalesperson').value = r.salesperson || '';
+  document.getElementById('mNotes').value = r.notes || '';
+  document.getElementById('editModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('active');
+  modalEditIndex = -1;
+}
+
+function saveModalEdit() {
+  if (modalEditIndex < 0) return;
+  const project = document.getElementById('mProject').value.trim();
+  if (!project) {
+    showToast('יש למלא את שם הפרויקט!', 'error');
+    return;
+  }
+
+  records[modalEditIndex] = {
+    date: document.getElementById('mDate').value,
+    project: project,
+    details: document.getElementById('mDetails').value.trim(),
+    order: document.getElementById('mOrder').value.trim(),
+    salesperson: document.getElementById('mSalesperson').value.trim(),
+    notes: document.getElementById('mNotes').value.trim()
+  };
+
+  saveData();
+  renderTable();
+  updateStats();
+  updateSalesFilter();
+  closeModal();
+  showToast('✅ הרשומה עודכנה בהצלחה!', 'success');
+}
+
+// ===== DELETE =====
+function askDelete(index) {
+  deleteIndex = index;
+  const r = records[index];
+  document.getElementById('confirmText').textContent = `האם למחוק: "${r.project}"?`;
+  document.getElementById('confirmOverlay').classList.add('active');
+}
+
+function confirmDelete() {
+  if (deleteIndex >= 0) {
+    records.splice(deleteIndex, 1);
+    saveData();
+    renderTable();
+    updateStats();
+    updateSalesFilter();
+    showToast('🗑️ הרשומה נמחקה!', 'info');
+  }
+  closeConfirm();
+}
+
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('active');
+  deleteIndex = -1;
+}
+
+// ===== EXPORT TO EXCEL =====
+function exportToExcel() {
+  if (records.length === 0) {
+    showToast('אין נתונים לייצוא!', 'error');
+    return;
+  }
+
+  const wb = XLSX.utils.book_new();
+
+  // Build rows
+  const wsData = [];
+
+  // Header
+  wsData.push(['תאריך', 'שם הפרוייקט +כתובת', 'פרטים', "מס' הזמנה", 'איש מכירות', 'הערות']);
+
+  // Data
+  records.forEach(r => {
+    let dateVal = r.date ? new Date(r.date + 'T00:00:00') : null;
+    wsData.push([
+      dateVal,
+      r.project,
+      r.details,
+      r.order ? (isNaN(r.order) ? r.order : parseInt(r.order)) : null,
+      r.salesperson,
+      r.notes
+    ]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Set RTL
+  if (!ws['!sheetView']) ws['!sheetView'] = {};
+  ws['!sheetViews'] = [{ rightToLeft: true }];
+
+  // Column widths
+  ws['!cols'] = [
+    { wch: 14 },
+    { wch: 32 },
+    { wch: 28 },
+    { wch: 12 },
+    { wch: 16 },
+    { wch: 28 }
+  ];
+
+  // Date format for column A
+  const dateFormat = 'DD/MM/YYYY';
+  for (let i = 1; i < wsData.length; i++) {
+    const cellRef = XLSX.utils.encode_cell({ r: i, c: 0 });
+    if (ws[cellRef] && ws[cellRef].v instanceof Date) {
+      ws[cellRef].t = 'd';
+      ws[cellRef].z = dateFormat;
+    }
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, 'גיליון1');
+
+  // Generate today's date for filename
+  const today = new Date().toISOString().split('T')[0].replace(/-/g,'');
+  XLSX.writeFile(wb, `סידור_עבודה_${today}.xlsx`);
+
+  showToast('📁 הקובץ יוצא בהצלחה!', 'success');
+}
+
+// ===== IMPORT FROM EXCEL =====
+function importFromExcel() {
+  document.getElementById('importFile').click();
+}
+
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array', cellDates: true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, dateNF: 'YYYY-MM-DD' });
+
+      if (rows.length < 2) {
+        showToast('הקובץ ריק או לא תקין!', 'error');
+        return;
+      }
+
+      const imported = [];
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || row.length === 0) continue;
+
+        let dateVal = row[0] || '';
+        // Try to parse date
+        if (dateVal && !(dateVal instanceof Date)) {
+          // Excel serial or string
+          const tryDate = new Date(dateVal);
+          if (!isNaN(tryDate)) {
+            dateVal = tryDate.toISOString().split('T')[0];
+          } else {
+            dateVal = String(dateVal).substring(0, 10);
+          }
+        } else if (dateVal instanceof Date) {
+          dateVal = dateVal.toISOString().split('T')[0];
+        }
+
+        imported.push({
+          date: String(dateVal).substring(0, 10),
+          project: String(row[1] || '').trim(),
+          details: String(row[2] || '').trim(),
+          order: String(row[3] || '').trim() === 'null' ? '' : String(row[3] || '').trim(),
+          salesperson: String(row[4] || '').trim(),
+          notes: String(row[5] || '').trim()
+        });
+      }
+
+      records = imported;
+      saveData();
+      renderTable();
+      updateStats();
+      updateSalesFilter();
+      showToast(`✅ יובאו ${imported.length} רשומות!`, 'success');
+    } catch(err) {
+      showToast('שגיאה בייבוא הקובץ: ' + err.message, 'error');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  event.target.value = '';
+}
+
+// ===== TOAST =====
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.4s';
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeConfirm();
+  }
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    exportToExcel();
+  }
+  if (e.ctrlKey && e.key === 'Enter') {
+    e.preventDefault();
+    saveRecord();
+  }
+});
+
+// ===== START =====
+window.onload = init;
+</script>
+</body>
+</html>
